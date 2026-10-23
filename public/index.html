@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Case Risk Scoring</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 960px; margin: 24px auto; padding: 0 16px; }
+    table { width: 100%; border-collapse: collapse; margin-bottom: 24px; }
+    th, td { text-align: left; padding: 6px; border-bottom: 1px solid #ddd; }
+    input { width: 60%; padding: 6px; }
+    .error { color: #b00020; }
+    .muted { color: #888; }
+    .band { font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h1>Incident Case Risk Scoring</h1>
+
+  <h2>Available alerts</h2>
+  <table><thead><tr><th>Title</th><th>Category</th><th>Host</th><th>Score</th><th></th></tr></thead>
+    <tbody id="alerts"></tbody></table>
+
+  <h2>Case</h2>
+  <table><thead><tr><th>Title</th><th>Category</th><th>Host</th><th>Score</th><th></th></tr></thead>
+    <tbody id="case"></tbody></table>
+
+  <h2>Policy</h2>
+  <form id="policy-form">
+    <input id="policy" placeholder="e.g. REPEAT_NOISE_DAMPING, CRITICAL_ASSET_BOOST">
+    <button>Apply</button>
+    <div class="muted">Options: REPEAT_NOISE_DAMPING, CRITICAL_ASSET_BOOST, APT_CAMPAIGN_LINK (one escalation at a time). Empty clears.</div>
+    <div id="error" class="error"></div>
+  </form>
+
+  <h2>Score summary</h2>
+  <div id="summary"></div>
+
+<script>
+const $ = (id) => document.getElementById(id);
+// Escape server data before inserting into HTML.
+const esc = (s) => String(s).replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
+let caseIds = new Set();
+
+async function api(method, url, body) {
+  const res = await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: body && JSON.stringify(body) });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error);
+  return data;
+}
+
+const row = (a, btn) => `<tr><td>${esc(a.title)}</td><td>${esc(a.category)}</td><td>${esc(a.source_host)}</td><td>${a.base_score}</td><td>${btn}</td></tr>`;
+
+function renderCase({ alerts, policies, summary }) {
+  caseIds = new Set(alerts.map((a) => a.id));
+  $('case').innerHTML = alerts.map((a) => row(a, `<button onclick="remove(${a.id})">Remove</button>`)).join('')
+    || '<tr><td colspan="5" class="muted">No alerts in case</td></tr>';
+  $('policy').value = policies.join(', ');
+  const adj = summary.adjustments.map((x) =>
+    `<li class="${x.applied ? '' : 'muted'}">${x.policy}: ${x.points >= 0 ? '+' : ''}${x.points} (${esc(x.note)})</li>`).join('');
+  $('summary').innerHTML = `<p>Raw score: <b>${summary.raw}</b></p>
+    <p>Adjustments:</p><ul>${adj || '<li class="muted">None</li>'}</ul>
+    <p>Final score: <b>${summary.final}</b> &mdash; <span class="band">${summary.severity}</span></p>`;
+  loadAlerts();
+}
+
+async function loadAlerts() {
+  const alerts = await api('GET', '/api/alerts');
+  $('alerts').innerHTML = alerts.map((a) =>
+    row(a, `<button onclick="add(${a.id})" ${caseIds.has(a.id) ? 'disabled' : ''}>Add to case</button>`)).join('');
+}
+
+async function add(id) { renderCase(await api('POST', '/api/case/alerts', { alertId: id })); }
+async function remove(id) { renderCase(await api('DELETE', `/api/case/alerts/${id}`)); }
+
+$('policy-form').onsubmit = async (e) => {
+  e.preventDefault();
+  $('error').textContent = '';
+  try { renderCase(await api('PUT', '/api/case/policies', { policies: $('policy').value })); }
+  catch (err) { $('error').textContent = err.message; }
+};
+
+api('GET', '/api/case').then(renderCase);
+</script>
+</body>
+</html>
