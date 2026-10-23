@@ -16,6 +16,7 @@
 </head>
 <body>
   <h1>Incident Case Risk Scoring</h1>
+  <div id="error" class="error" role="alert"></div>
 
   <h2>Available alerts</h2>
   <table><thead><tr><th>Title</th><th>Category</th><th>Host</th><th>Score</th><th></th></tr></thead>
@@ -30,7 +31,6 @@
     <input id="policy" placeholder="e.g. REPEAT_NOISE_DAMPING, CRITICAL_ASSET_BOOST">
     <button>Apply</button>
     <div class="muted">Options: REPEAT_NOISE_DAMPING, CRITICAL_ASSET_BOOST, APT_CAMPAIGN_LINK (one escalation at a time). Empty clears.</div>
-    <div id="error" class="error"></div>
   </form>
 
   <h2>Score summary</h2>
@@ -44,9 +44,16 @@ let caseIds = new Set();
 
 async function api(method, url, body) {
   const res = await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: body && JSON.stringify(body) });
-  const data = await res.json();
-  if (!res.ok) throw new Error(data.error);
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data.error || `Request failed (${res.status})`);
   return data;
+}
+
+// Every user action goes through here so failures (incl. network errors) are always shown.
+async function run(action) {
+  $('error').textContent = '';
+  try { await action(); }
+  catch (err) { $('error').textContent = err.message; }
 }
 
 const row = (a, btn) => `<tr><td>${esc(a.title)}</td><td>${esc(a.category)}</td><td>${esc(a.source_host)}</td><td>${a.base_score}</td><td>${btn}</td></tr>`;
@@ -61,7 +68,7 @@ function renderCase({ alerts, policies, summary }) {
   $('summary').innerHTML = `<p>Raw score: <b>${summary.raw}</b></p>
     <p>Adjustments:</p><ul>${adj || '<li class="muted">None</li>'}</ul>
     <p>Final score: <b>${summary.final}</b> &mdash; <span class="band">${summary.severity}</span></p>`;
-  loadAlerts();
+  return loadAlerts();
 }
 
 async function loadAlerts() {
@@ -70,17 +77,15 @@ async function loadAlerts() {
     row(a, `<button onclick="add(${a.id})" ${caseIds.has(a.id) ? 'disabled' : ''}>Add to case</button>`)).join('');
 }
 
-async function add(id) { renderCase(await api('POST', '/api/case/alerts', { alertId: id })); }
-async function remove(id) { renderCase(await api('DELETE', `/api/case/alerts/${id}`)); }
+const add = (id) => run(async () => renderCase(await api('POST', '/api/case/alerts', { alertId: id })));
+const remove = (id) => run(async () => renderCase(await api('DELETE', `/api/case/alerts/${id}`)));
 
-$('policy-form').onsubmit = async (e) => {
+$('policy-form').onsubmit = (e) => {
   e.preventDefault();
-  $('error').textContent = '';
-  try { renderCase(await api('PUT', '/api/case/policies', { policies: $('policy').value })); }
-  catch (err) { $('error').textContent = err.message; }
+  run(async () => renderCase(await api('PUT', '/api/case/policies', { policies: $('policy').value })));
 };
 
-api('GET', '/api/case').then(renderCase);
+run(async () => renderCase(await api('GET', '/api/case')));
 </script>
 </body>
 </html>
