@@ -75,9 +75,11 @@ The tests cover every rule, the band boundaries, rounding, both caps, damping be
 |--------|------|------|---------|
 | GET    | `/api/alerts` | - | all alerts |
 | GET    | `/api/case` | - | case view |
-| POST   | `/api/case/alerts` | `{ "alertId": 3 }` | case view (404 if unknown alert; adding twice is a no-op) |
-| DELETE | `/api/case/alerts/:alertId` | - | case view |
-| PUT    | `/api/case/policies` | `{ "policies": "REPEAT_NOISE_DAMPING, APT_CAMPAIGN_LINK" }` | case view, or 400 with `{ error }` |
+| POST   | `/api/case/alerts` | `{ "alertId": 3 }` | case view; 400 if `alertId` is not a positive integer, 404 if unknown; adding twice is a no-op |
+| DELETE | `/api/case/alerts/:alertId` | - | case view; 400 if the id is not a positive integer; removing an alert not in the case is a no-op |
+| PUT    | `/api/case/policies` | `{ "policies": "REPEAT_NOISE_DAMPING, APT_CAMPAIGN_LINK" }` | case view; 400 if `policies` is missing/not a string, unknown, or two escalations |
+
+All errors are JSON: `{ "error": "..." }`. Input is validated strictly: `true`, `"1"`, `1.5` are rejected, not coerced.
 
 Case view:
 
