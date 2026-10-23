@@ -54,7 +54,7 @@ test('APT_CAMPAIGN_LINK does not apply below 50 (e.g. after an alert is removed)
 });
 
 test('damping runs before the APT threshold check', () => {
-  // raw 56 qualifies, but after damping the score is 40, so APT must not apply
+  // raw 56 qualifies, but after damping the score is 46 (16 + 30), so APT must not apply
   const s = scoreCase([a(16, 'network_scan'), a(10, 'network_scan'), a(30)], ['REPEAT_NOISE_DAMPING', 'APT_CAMPAIGN_LINK']);
   assert.equal(s.final, 46);
   assert.equal(s.adjustments[1].applied, false);
