@@ -1,0 +1,15 @@
+{
+  "name": "case-risk-scoring",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Incident case risk scoring tool",
+  "main": "src/server.js",
+  "engines": { "node": ">=22.13" },
+  "scripts": {
+    "start": "node src/server.js",
+    "test": "node --test"
+  },
+  "dependencies": {
+    "express": "^5.1.0"
+  }
+}
