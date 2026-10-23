@@ -1,0 +1,130 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-23T00:00:00Z",
+  "title": "Design System: Risk Scoring",
+  "extensions": {
+    "colorMeta": {
+      "primary": {
+        "role": "primary",
+        "displayName": "Deep Evergreen"
+      },
+      "bg": {
+        "role": "neutral",
+        "displayName": "Warm Mist"
+      },
+      "rail": {
+        "role": "neutral",
+        "displayName": "Deep Teal"
+      }
+    },
+    "shadows": [],
+    "motion": [
+      {
+        "name": "button-state",
+        "value": "background .16s, color .16s",
+        "purpose": "Button background and text state changes."
+      },
+      {
+        "name": "score-fill",
+        "value": "width .35s ease-out",
+        "purpose": "Risk track update; disabled with prefers-reduced-motion."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "wide",
+        "value": "1600px"
+      },
+      {
+        "name": "compact-desktop",
+        "value": "1180px"
+      },
+      {
+        "name": "icon-rail",
+        "value": "1000px"
+      },
+      {
+        "name": "stack-workspace",
+        "value": "760px"
+      },
+      {
+        "name": "stack-controls",
+        "value": "540px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Apply the selected scoring policies.",
+      "html": "<button class=\"ds-primary\">Apply policies <span>?</span></button>",
+      "css": ".ds-primary{display:flex;justify-content:space-between;align-items:center;background:var(--accent,#176c59);color:#fff;border:0;border-radius:6px;padding:12px 14px;width:100%;font:500 12px Inter,\"Segoe UI\",Arial,sans-serif;cursor:pointer;transition:background .16s,color .16s}.ds-primary:hover{background:#11533f}.ds-primary:focus-visible{outline:2px solid var(--accent,#176c59);outline-offset:4px}.ds-primary:disabled{background:#73877a;cursor:default}"
+    },
+    {
+      "name": "Add Alert",
+      "kind": "button",
+      "description": "Secondary action in an alert row.",
+      "html": "<button class=\"ds-add\">Add to case</button>",
+      "css": ".ds-add{border:1px solid #d9e3d9;background:#fff;border-radius:5px;color:var(--accent,#176c59);padding:6px 9px;font:11px Inter,\"Segoe UI\",Arial,sans-serif;cursor:pointer;transition:background .16s,color .16s}.ds-add:hover{background:var(--accent-soft,#edf5ef);border-color:#9bbda7}.ds-add:focus-visible{outline:2px solid var(--accent,#176c59);outline-offset:4px}.ds-add:disabled{border-color:transparent;background:#f1f5ef;color:#677a69;cursor:default}"
+    },
+    {
+      "name": "Search Field",
+      "kind": "input",
+      "description": "Search alerts or hosts.",
+      "html": "<label class=\"ds-search\"><input aria-label=\"Search alerts or hosts\" placeholder=\"Search alerts or hosts?\"></label>",
+      "css": ".ds-search{display:flex;border:1px solid #dce2da;border-radius:6px;padding:0 10px;background:#fff}.ds-search input{width:100%;border:0;background:transparent;outline:none;padding:10px 0;font:12px Inter,\"Segoe UI\",Arial,sans-serif;color:var(--ink,#233432)}.ds-search input::placeholder{color:#6a766e}.ds-search:focus-within{outline:2px solid var(--accent,#176c59);outline-offset:2px}"
+    },
+    {
+      "name": "Active Navigation",
+      "kind": "nav",
+      "refersTo": "navigation-active",
+      "description": "Current workspace destination within the dark rail.",
+      "html": "<a class=\"ds-nav\" href=\"#workspace\">Case workspace<span class=\"ds-dot\"></span></a>",
+      "css": ".ds-nav{display:flex;align-items:center;gap:11px;padding:13px 12px;border-radius:7px;background:#284440;color:#f2f7f3;font:13px Inter,\"Segoe UI\",Arial,sans-serif;text-decoration:none}.ds-dot{width:6px;height:6px;background:#afd3b9;border-radius:50%;margin-left:auto}.ds-nav:focus-visible{outline:2px solid var(--accent,#176c59);outline-offset:4px}"
+    },
+    {
+      "name": "Category Badge",
+      "kind": "chip",
+      "description": "Text-bearing phishing category indicator.",
+      "html": "<span class=\"ds-badge\">Phishing</span>",
+      "css": ".ds-badge{font:10px Inter,\"Segoe UI\",Arial,sans-serif;display:inline-block;border-radius:4px;padding:5px 7px;white-space:nowrap;background:#f8f0db;color:#7d5b18}"
+    },
+    {
+      "name": "Panel",
+      "kind": "card",
+      "refersTo": "panel",
+      "description": "Flat bordered workspace section.",
+      "html": "<section class=\"ds-panel\"><div class=\"ds-heading\"><h2>Available alerts</h2><p>Select the signals that belong in this case.</p></div></section>",
+      "css": ".ds-panel{background:var(--surface,#fff);border:1px solid var(--line,#e4e8e2);border-radius:var(--radius,12px);overflow:hidden;color:var(--ink,#233432);font-family:Inter,\"Segoe UI\",Arial,sans-serif}.ds-heading{padding:23px 24px 20px}.ds-heading h2{margin:0;font-size:15px;font-weight:650;letter-spacing:-.2px}.ds-heading p{font-size:12px;color:var(--muted,#65716e);margin:7px 0 0;line-height:1.6}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Analyst Workspace",
+    "overview": "A calm, light SOC workspace framed by a dark teal navigation rail. The visual hierarchy supports operating a shared case: scan alerts, select related signals, apply policy context, then read the risk assessment.\n\nRestrained green actions, compact rows, and quiet borders keep dense information readable. This document captures the implemented stylesheet in `public/styles.css`; it does not prescribe a replacement visual identity.",
+    "keyCharacteristics": [
+      "Light work surfaces with a dark teal rail.",
+      "Compact, scanable alerts with category badges.",
+      "Prominent risk score and aligned numeric breakdowns."
+    ],
+    "rules": [
+      {
+        "name": "The Semantic Color Rule",
+        "body": "Preserve readable text labels alongside category and severity colors.",
+        "section": "colors"
+      }
+    ],
+    "dos": [
+      "Do preserve text labels alongside semantic colors.",
+      "Do align scores with tabular figures and clear row boundaries.",
+      "Do retain keyboard focus outlines and reduced-motion behavior.",
+      "Do use the existing flat surfaces, restrained accent, and responsive rail behavior."
+    ],
+    "donts": [
+      "Don't treat the named Inter font as a guaranteed downloaded font.",
+      "Don't replace score or category labels with color alone.",
+      "Don't add shadows to represent the current flat panel system."
+    ]
+  }
+}

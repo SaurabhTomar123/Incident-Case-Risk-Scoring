@@ -8,7 +8,7 @@ A small full-stack tool for SOC analysts: pick security alerts, group them into 
 |----------|--------|-----|
 | Backend  | Node.js 24 + Express 5 | Small, readable HTTP layer |
 | Database | SQLite via built-in `node:sqlite` | Zero setup, no native build step, file-based persistence |
-| Frontend | Single `index.html`, vanilla JS | The UI can be plain; no build tooling needed |
+| Frontend | HTML, CSS, vanilla JS | Responsive analyst workspace; no build tooling needed |
 | Tests    | `node:test` (built in) | No extra test dependencies |
 
 Express is the only runtime dependency.
@@ -16,7 +16,9 @@ Express is the only runtime dependency.
 ## Architecture
 
 ```
-public/index.html   UI: alert list, case view, policy box, score summary
+public/index.html   UI structure and accessible policy controls
+public/styles.css   Responsive layout, colors and component styles
+public/ui.js        Alert search/filter, API actions and score rendering
 src/server.js       entry point (reads PORT, DB_PATH)
 src/app.js          REST routes; builds the case view
 src/db.js           schema + idempotent seed
