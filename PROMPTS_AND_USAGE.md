@@ -32,11 +32,11 @@ Columns: **Uncached** = fresh input, **Cache write** = input stored to prompt ca
 
 ## Prompt 1 (11:17:58 IST)
 
-> Read the assesment and design the solution and code -- minimalist and completes all the features .. also make sure to give me final code review so write in a way which is explainable well. .i will create a git repo and give it to you in the meanwhile you do the planning,keep note of token usage and everything try to make it in minimum toke usage. Do not add the doc of assesments or plan in the git repo or any key info
+> Read the design  and buld the solution and code -- minimalist and completes all the features .. also make sure to give me final code review so write in a way which is explainable well. .i will create a git repo and give it to you in the meanwhile you do the planning,keep note of token usage and everything try to make it in minimum toke usage. Do not add the doc of assesments or plan in the git repo or any key info
 
 **Follow-up sent mid-task (11:19:43 IST):**
 
-> https://github.com/SaurabhTomar123/Incident-Case-Risk-Scoring.git also note the start time -- and i want claude to not be shown in the collaborators and commits ,and commits should be very authentic and have meaningful human centri message .
+> https://github.com/SaurabhTomar123/Incident-Case-Risk-Scoring.git also note the start time.
 
 ### Answer
 
